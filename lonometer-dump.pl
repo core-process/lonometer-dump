@@ -54,7 +54,7 @@ close (PIPE);
 open (FILE, ">", "$updatefile");
 
 # get battery level
-open (PIPE, "/usr/bin/timeout 45 /usr/local/bin/gatttool -b " . join(":", @mac) . " --char-read --handle=0x002b|");
+open (PIPE, "/usr/bin/timeout 45 /usr/bin/gatttool -b " . join(":", @mac) . " --char-read --handle=0x002b|");
 
 while (<PIPE>)
 {
@@ -73,9 +73,10 @@ while (<PIPE>)
 close (PIPE);
 
 # get temperature and humidity values
-open (PIPE, "/usr/bin/timeout 45 /usr/local/bin/gatttool -b " . join(":", @mac) . " --char-write-req --handle=0x0026 --value=0100 --listen|");
+open (PIPE, "/usr/bin/timeout 45 /usr/bin/gatttool -b " . join(":", @mac) . " --char-write-req --handle=0x0026 --value=0100 --listen|");
 
 my $data_count = 0;
+my $data_saved_count = 0;
 
 while (<PIPE>)
 {
@@ -111,6 +112,8 @@ while (<PIPE>)
 			printf FILE "rrdtool update %s %d:%d\n", $rrdfile_temp, $time, $temperature;
 			printf FILE "rrdtool update %s %d:%d\n", $rrdfile_rh,   $time, $humidity;
 			printf FILE "rrdtool update %s %d:%f\n", $rrdfile_tdew, $time, $tdew;
+
+			$data_saved_count = $data_saved_count + 1;
 		}
 		
 		print "\n";
@@ -130,3 +133,4 @@ close (PIPE);
 close (FILE);
 
 printf ("received %d points\n", $data_count);
+printf ("saved %d new points\n", $data_saved_count);

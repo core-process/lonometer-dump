@@ -1,7 +1,7 @@
 #!/bin/bash
 
-name="AABBCCDDEEFF"
-path="/tmp"
+name="84DD20EF0997"
+path="/home/niklas/templog"
 
 rrdfile_temp="${path}/${name}_temp.rrd"
 rrdfile_tdew="${path}/${name}_tdew.rrd"
